@@ -133,13 +133,14 @@
     <div class="row">
       <div class="col-md-12">
         <form id="post_form" onsubmit="return false;"  class="contact_form">
-          <input type="month" required placeholder="year" id="year" style="margin-right: 20px">
+          <input type="month" required placeholder="year"  id="year" style="margin-right: 20px">
           <input type="number" min="1" required placeholder="Circulations" id="circulations" style="margin-right: 20px">
           <input type="number" min="1" required placeholder="Collection" id="collection" style="margin-right: 20px">
           <br>
           <div>
             <button type="submit"  class="send_btn" onclick="addRow()">add</button>
           </div>
+          <br><br>
         </form>
         <hr>
       </div>
@@ -215,9 +216,9 @@
 <script>
   function addRow() {
 
-    if (!document.getElementById("circulations").empty()
-    && !document.getElementById("collection").empty()
-    && !document.getElementById("year").value.empty()) {
+    if (document.getElementById("circulations").value !==''
+    && document.getElementById("collection").value !==''
+    && document.getElementById("year").value !=='') {
       var table = document.getElementById("turnoverTable");
       var row = table.insertRow(-1);
       var cell1 = row.insertCell(0);
@@ -226,6 +227,8 @@
 
       var cir = document.getElementById("circulations").value;
       var col = document.getElementById("collection").value;
+      ///var yer = document.getElementById("year").value;
+     //// document.getElementById("yuosif").innerHTML = yer;
       var deleteButton = '<button type="button" class="btn btn-default" onclick="deleteRow(this)">delete</button>';
 
       cell1.innerHTML = $("#year").val();
