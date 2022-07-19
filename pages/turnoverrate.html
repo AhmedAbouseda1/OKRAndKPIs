@@ -132,15 +132,14 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <form id="post_form" onsubmit="return false;"  class="contact_form">
-          <input type="month" required placeholder="year"  id="year" style="margin-right: 20px">
+        <form id="post_form" onsubmit="return false;" class="contact_form">
+          <input type="month" required placeholder="year" id="year" style="margin-right: 20px">
           <input type="number" min="1" required placeholder="Circulations" id="circulations" style="margin-right: 20px">
           <input type="number" min="1" required placeholder="Collection" id="collection" style="margin-right: 20px">
           <br>
           <div>
-            <button type="submit"  class="send_btn" onclick="addRow()">add</button>
+            <button type="submit" class="send_btn" onclick="check()">add</button>
           </div>
-          <br><br>
         </form>
         <hr>
       </div>
@@ -161,11 +160,20 @@
           </tr>
           </thead>
         </table>
+        <form  onsubmit="return false;" class="contact_form" >
+        <div>
+          <button type="submit" class="send_btn" onclick="finalGraph()">show graph</button>
+          <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+        </div>
+        </form>
+
       </div>
     </div>
   </div>
+
 </div>
-</div>
+
+
 <!--  footer -->
 <footer>
   <div class="footer">
@@ -216,9 +224,9 @@
 <script>
   function addRow() {
 
-    if (document.getElementById("circulations").value !==''
-    && document.getElementById("collection").value !==''
-    && document.getElementById("year").value !=='') {
+    if (document.getElementById("circulations").value !== ''
+      && document.getElementById("collection").value !== ''
+      && document.getElementById("year").value !== '') {
       var table = document.getElementById("turnoverTable");
       var row = table.insertRow(-1);
       var cell1 = row.insertCell(0);
@@ -227,21 +235,78 @@
 
       var cir = document.getElementById("circulations").value;
       var col = document.getElementById("collection").value;
-      ///var yer = document.getElementById("year").value;
-     //// document.getElementById("yuosif").innerHTML = yer;
-      var deleteButton = '<button type="button" class="btn btn-default" onclick="deleteRow(this)">delete</button>';
 
+      var deleteButton = '<button type="button" class="btn btn-default" onclick="deleteRow(this)">delete</button>';
       cell1.innerHTML = $("#year").val();
       cell2.innerHTML = cir / col;
       cell3.innerHTML = deleteButton;
+      drawGraph();
     }
 
   }
 
   function deleteRow(btn) {
     var row = btn.parentNode.parentNode;
+    deleteEleFromMap(row.firstElementChild.innerHTML);
     row.parentNode.removeChild(row);
+
+  }
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<script>
+  function deleteEleFromMap(x){
+    mapStore.delete(x)
+  }
+  function finalGraph() {
+    const sortedMap = new Map([...mapStore].sort());
+    const xValues = Array.from(sortedMap.keys());
+    const yValues = Array.from(sortedMap.values());
+    const maxNumber = Math.max(...sortedMap.values());
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(0,0,255,1.0)",
+          borderColor: "rgba(0,0,255,0.1)",
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        scales: {
+          yAxes: [{ticks: {min: 0, max: maxNumber}}],
+        }
+      }
+    });
+
+  }
+
+  const mapStore = new Map();
+
+  function drawGraph() {
+    var circ = document.getElementById('circulations').value;
+    var coll = document.getElementById('collection').value;
+    var rate = circ / coll;
+    var year = document.getElementById('year').value;
+    mapStore.set(year, rate);
+
+  }
+
+  function check() {
+    var x = document.getElementById('year').value;
+    if (mapStore.has(x)) {
+      alert(x + " already exists")
+      return;
+    } else {
+      addRow();
+    }
   }
 </script>
+
 </body>
 </html>
